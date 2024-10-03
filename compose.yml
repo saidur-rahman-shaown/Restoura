@@ -1,0 +1,236 @@
+services:
+  pgadmin:
+    container_name: pgadimn-4
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    networks:
+      - restaura_network
+
+  customer-db:
+    container_name: customer_service_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: customerdb
+    volumes:
+      - "customer_db_volume:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    networks:
+      - restaura_network
+    hostname: customer-db
+
+  authentication-db:
+    container_name: authentication_service_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: userdb
+    volumes:
+      - "auth_data_volume:/var/lib/postgresql/data"
+    ports:
+      - "5434:5432"
+    networks:
+      - restaura_network
+    hostname: authentication-db
+
+  discovery-server:
+    build: ServiceRegistry
+    container_name: service-registry-container
+    ports:
+      - "8761:8761"
+    networks:
+      - restaura_network
+    hostname: service-registry
+
+  api-gateway:
+    build: APIGateway
+    container_name: api-gateway-container
+    depends_on:
+      - discovery-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8080:8080"
+    networks:
+      - restaura_network
+
+  customer-service:
+    build: CustomerService
+    container_name: customer-service-container
+    depends_on:
+      - customer-db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://customer-db:5432/customerdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8083:8080"
+    networks:
+      - restaura_network
+
+  authentication-service:
+    build: AuthService
+    container_name: auth-service-container
+    depends_on:
+      - authentication-db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://authentication-db:5432/userdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8084:8080"
+    networks:
+      - restaura_network
+
+  order-placement-db:
+    container_name: orderplacement_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: orderplacementdb
+    volumes:
+      - "order_placement_volume:/var/lib/postgresql/data"
+    ports:
+      - "5433:5432"
+    networks:
+      - restaura_network
+    hostname: order-db
+
+  order-placement:
+    build: OrderPlacementService
+    container_name: order-placement-container
+    depends_on:
+      - order-placement-db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://order-db:5432/orderplacementdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8081:8080"
+    networks:
+      - restaura_network
+
+  restaurant_service_db:
+    container_name: restaurant_service_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: restaurantdb
+    volumes:
+      - "restaurant_db:/var/lib/postgresql/data"
+    ports:
+      - "5436:5432"
+    networks:
+      - restaura_network
+    hostname: restaurant-db
+
+  restuarant_service:
+    build: RestaurantService
+    container_name: restaurant-service-container
+    depends_on:
+      - restaurant_service_db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://restaurant-db:5432/restaurantdb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8086:8080"
+    networks:
+      - restaura_network
+
+  cuisine_service_db:
+    container_name: cuisine_service_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: cuisinedb
+    volumes:
+      - "cuisine_db:/var/lib/postgresql/data"
+    ports:
+      - "5437:5432"
+    networks:
+      - restaura_network
+    hostname: cuisine-db
+
+  cuisine_service:
+    build: CuisineService
+    container_name: cuisine-service-container
+    depends_on:
+      - cuisine_service_db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://cuisine-db:5432/cuisinedb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8087:8080"
+    networks:
+      - restaura_network
+
+  vendor_service_db:
+    container_name: vendor_service_database
+    image: postgres:16.4-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: vendordb
+    volumes:
+      - "vendor_db_volume:/var/lib/postgresql/data"
+    ports:
+      - "5438:5432"
+    networks:
+      - restaura_network
+    hostname: vendor-db
+
+  vendor_service:
+    build: VendorService
+    container_name: vendor-service-container
+    depends_on:
+      - vendor_service_db
+      - discovery-server
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://vendor-db:5432/vendordb
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=root
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka/
+    ports:
+      - "8088:8080"
+    networks:
+      - restaura_network
+
+
+volumes:
+  customer_db_volume:
+  auth_data_volume:
+  order_placement_volume:
+  restaurant_db:
+  cuisine_db:
+  vendor_db_volume:
+
+networks:
+  restaura_network:

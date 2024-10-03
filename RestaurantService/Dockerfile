@@ -17,10 +17,10 @@ FROM openjdk:17-oracle
 WORKDIR /app
 
 # Copy the built jar from the build stage
-COPY --from=buildstage /app/target/*.jar customerservice.jar
+COPY --from=buildstage /app/target/*.jar restaurant_service.jar
 
 # Expose the application port
 EXPOSE 8080
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "customerservice.jar"]
+ENTRYPOINT ["java", "-jar", "restaurant_service.jar"]

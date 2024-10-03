@@ -1,0 +1,39 @@
+{
+    "name": "John Doe",
+    "email": "johndoe@example.com",
+    "addresses": [
+      {
+        "id": 1,
+        "addressLine1": "123 Main St",
+        "addressLine2": "Apt 4B",
+        "city": "New York",
+        "state": "NY",
+        "postalCode": "10001",
+        "country": "USA",
+        "customer": "johndoe@example.com"
+      },
+      {
+        "id": 2,
+        "addressLine1": "456 Elm St",
+        "addressLine2": "",
+        "city": "Los Angeles",
+        "state": "CA",
+        "postalCode": "90001",
+        "country": "USA",
+        "customer": "johndoe@example.com"
+      }
+    ],
+    "age": 30,
+    "occupation": "Software Engineer",
+    "sex": "Male",
+    "contactNo": "+1234567890"
+  }
+ -----------------------------------------------------------
+start dev postgres
+
+dev data
+
+docker run -d --name dev_database -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=root -e POSTGRES_DB=userdb -v dev_volume:/var/lib/postgresql/data -p 5434:5432 --hostname dev_db  postgres:16.4-alpine
+
+pg_admin
+docker run -d --name pgadimn-4 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=root -p 5050:80 dpage/pgadmin4
