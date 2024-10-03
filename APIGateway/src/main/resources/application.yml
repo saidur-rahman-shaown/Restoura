@@ -1,0 +1,68 @@
+spring:
+ cloud:
+   gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: '*'
+            allowedMethods:
+            - GET
+            - POST
+            - PUT
+            - DELETE
+            allowedHeaders: '*'
+            maxAge: 30  
+            
+      routes:
+       - id: VendorService
+         uri: lb://VENDORSERVICE
+         predicates:
+           - Path=/vendor/**
+         filters:
+           - AuthenticationFilter   
+           
+       - id: RestaurantService
+         uri: lb://RESTAURANTSERVICE
+         predicates:
+           - Path=/restaurant/**
+         filters:
+           - AuthenticationFilter  
+           
+       - id: CuisineService
+         uri: lb://CUISINESERVICE
+         predicates:
+           - Path=/cuisine/**
+         filters:
+           - AuthenticationFilter  
+ 
+       - id: OrderService
+         uri: lb://ORDERSERVICE
+         predicates:
+           - Path=/order/**
+         filters:
+           - AuthenticationFilter
+
+       - id: CustomerService
+         uri: lb://CUSTOMERSERVICE
+         predicates:
+           - Path=/customers/**
+         filters:
+           - AuthenticationFilter
+           
+       - id: AuthService
+         uri: lb://AUTHSERVICE
+         predicates:
+           - Path=/auth/**
+         
+         
+
+ application:
+   name: APIGATEWAY
+   
+server:
+  port: 8080   
+
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone : http://localhost:8765/eureka
