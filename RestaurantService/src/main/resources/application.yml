@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/customerdb
+    url: jdbc:postgresql://localhost:5432/restaurantdb
     username: postgres
     password: root
 
@@ -16,12 +16,6 @@ spring:
     jdbc:
       dialect: postgresql
 
-springdoc:
-  swagger-ui:
-    path: /customers/swagger-ui.html
-  api-docs:
-    path: /customers/v3/api_docs
-
 eureka:
   instance:
     prefer-ip-address: true
@@ -32,3 +26,8 @@ eureka:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
 
+springdoc:
+  swagger-ui:
+    path: /restaurant/swagger-ui.html
+  api-docs:
+    path: /restaurant/v3/api_docs

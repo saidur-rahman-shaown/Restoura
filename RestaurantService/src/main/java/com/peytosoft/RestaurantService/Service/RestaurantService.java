@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,9 @@ public class RestaurantService {
 	
 	@Autowired
 	private CallVendor callVendor;
-	
-	private final String FOLDER_PATH="C:\\Users\\Nazmul\\Desktop\\restaurants\\";
+
+	@Value("${path.restuarant.picture}")
+	String FOLDER_PATH ;
 
 	public ResponseEntity<Integer> addRestaurant(RestaurantDto restaurantDto, Integer ownerId) {
 	Restaurant restaurant	= restaurantDao.save(Restaurant.builder()

@@ -1,7 +1,7 @@
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/customerdb
+    url: jdbc:postgresql://localhost:5432/cuisinedb
     username: postgres
     password: root
 
@@ -18,9 +18,9 @@ spring:
 
 springdoc:
   swagger-ui:
-    path: /customers/swagger-ui.html
+    path: /cuisine/swagger-ui.html
   api-docs:
-    path: /customers/v3/api_docs
+    path: /cuisine/v3/api_docs
 
 eureka:
   instance:

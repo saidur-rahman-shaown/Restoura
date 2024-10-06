@@ -35,7 +35,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     	 http.csrf(AbstractHttpConfigurer::disable)
     	        .cors(Customizer.withDefaults())
-    	        .authorizeHttpRequests(request -> request.requestMatchers("/auth/signup", "/auth/signin", "/auth/refresh").permitAll())
+    	        .authorizeHttpRequests(request -> request.requestMatchers("/auth/**").permitAll())
     	        .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
     	 
     	 return http.build();
