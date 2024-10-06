@@ -31,7 +31,7 @@ public class RestaurantService {
 	@Autowired
 	private CallVendor callVendor;
 
-	@Value("${path.restuarant.picture}")
+	@Value("${path.restaurant.picture}")
 	String FOLDER_PATH ;
 
 	public ResponseEntity<Integer> addRestaurant(RestaurantDto restaurantDto, Integer ownerId) {
